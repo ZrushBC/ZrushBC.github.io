@@ -165,14 +165,14 @@
     twikoo.init(Object.assign({
       el: '#twikoo-wrap',
       envId: 'https://zrushtwikoo.vercel.app/',
-      region: 'sp-kunming'
+      region: ''
     }, null))
   }
 
   const getCount = () => {
     twikoo.getCommentsCount({
       envId: 'https://zrushtwikoo.vercel.app/',
-      region: 'sp-kunming',
+      region: '',
       urls: [window.location.pathname],
       includeReply: false
     }).then(function (res) {
