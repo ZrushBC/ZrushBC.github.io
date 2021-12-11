@@ -4,6 +4,33 @@
   
     
     <entry>
+      <title>B站水哥自动化程序的拓展</title>
+      <link href="2021/12/10/B%E7%AB%99%E6%B0%B4%E5%93%A5%E8%87%AA%E5%8A%A8%E5%8C%96%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%8B%93%E5%B1%95/"/>
+      <url>2021/12/10/B%E7%AB%99%E6%B0%B4%E5%93%A5%E8%87%AA%E5%8A%A8%E5%8C%96%E7%A8%8B%E5%BA%8F%E7%9A%84%E6%8B%93%E5%B1%95/</url>
+      
+        <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在B站上看见了不高兴就喝水大佬用python写了一个自动化软件，比较感兴趣(PS：之前也写过一个脚本，是我拿来打方舟的，当然了那个脚本的实现是比较笨的)，然后在下面评论区又看见另一位up（各种焱）对该脚本又做了一个拓展，加上了热键组合、当前时间、系统指令集，也挺厉害的。然后在这个视频下面看到了有人想要一个跳转指令的，就回复了一下，想着既然已经回复了不如就干脆写一篇博客，正好能给我水一篇（不是），距离上一篇已经过去了3个月，震惊！接下来会好好更博客的（大概）。</p><ul><li><p><a href="https://www.bilibili.com/video/BV1T34y1o73U?share_source=copy_web">水哥的视频链接</a></p></li><li><p><a href="https://www.bilibili.com/video/BV18L41177Dq?share_source=copy_web">各种焱大佬的视频链接</a></p></li><li><p>B友要求以及我的回复的图：</p></li></ul><p><img src="https://cdn.jsdelivr.net/gh/mushanbc/ImgHosting@main/img/3-1.png"></p><blockquote><p>本拓展是在各种焱大佬拓展代码的基础上写的</p></blockquote><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>方法已经在上图说得很清楚了(大概)。当然这个方法还是存在一些问题的，因为设置的是一个变量而不是数组，所以跳转的命令段里面如果还有跳转则不会生效；也就是当发生嵌套的时候不会生效，解决办法就是设置成数组，那么判断则会变得复杂，下面的代码就仅仅实现一个跳转。</p><ol><li><p>在dataCheck函数中添加几行代码，让函数知道命令10是合法的</p><ul><li><p><code>and cmdType.value != 10.0</code> </p></li><li><p>```python</p><h1 id="10-0跳转命令，内容必须为数字且要小于命令行数以及大于0"><a href="#10-0跳转命令，内容必须为数字且要小于命令行数以及大于0" class="headerlink" title="10.0跳转命令，内容必须为数字且要小于命令行数以及大于0,"></a>10.0跳转命令，内容必须为数字且要小于命令行数以及大于0,</h1><p>  if cmdType.value == 10.0:</p><pre><code>  if (cmdValue.ctype != 2 and int(cmdValue.value) &lt;= sheet1.nrows and int(cmdValue.value) &gt; sheet1.nrows):      print(&#39;第&#39;, i + 1, &quot;行,第2列数据有毛病&quot;)    checkCmd = False</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">     </span><br><span class="line">   - 添加位置如下图</span><br><span class="line">   </span><br><span class="line">   - ![](https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;mushanbc&#x2F;ImgHosting@main&#x2F;img&#x2F;3-2.png)</span><br><span class="line">   </span><br><span class="line">   - ![](https:&#x2F;&#x2F;cdn.jsdelivr.net&#x2F;gh&#x2F;mushanbc&#x2F;ImgHosting@main&#x2F;img&#x2F;3-3.png)</span><br><span class="line">   </span><br><span class="line">2. 在mainWork函数中添加代码，实现命令10的功能</span><br><span class="line"></span><br><span class="line">   - &#96;&#96;&#96;python</span><br><span class="line">     # 10代表跳转</span><br><span class="line">     elif cmdType.value &#x3D;&#x3D; 10.0:</span><br><span class="line">         if flag &#x3D;&#x3D; False:</span><br><span class="line">             k &#x3D; int(sheet1.row(i)[2].value)</span><br><span class="line">             i &#x3D; int(sheet1.row(i)[1].value)-2</span><br><span class="line">             flag &#x3D; True</span><br><span class="line">         else:</span><br><span class="line">             k-&#x3D;1</span><br><span class="line">             if k&#x3D;&#x3D;0:</span><br><span class="line">                 flag&#x3D;False</span><br><span class="line">             else:</span><br><span class="line">                 i &#x3D; int(sheet1.row(i)[1].value)-2</span><br></pre></td></tr></table></figure></li><li><p>添加位置如下图</p></li><li><p><img src="https://cdn.jsdelivr.net/gh/mushanbc/ImgHosting@main/img/3-4.png"></p></li></ul></li></ol><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ul><li><p>原始代码在dataCheck里面并没有检查第三列的数据类型，而是在mainWork里做的检查，感觉怪怪的</p></li><li><p><code>pyautogui.locateCenterOnScreen(img, confidence=0.9)</code>返回的是图片中心的坐标元组</p></li></ul>]]></content>
+      
+      
+      <categories>
+          
+          <category> 小玩意儿 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> python </tag>
+            
+            <tag> 脚本 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>雷霆战机Java实现</title>
       <link href="2021/09/17/%E9%9B%B7%E9%9C%86%E6%88%98%E6%9C%BAjava/"/>
       <url>2021/09/17/%E9%9B%B7%E9%9C%86%E6%88%98%E6%9C%BAjava/</url>
